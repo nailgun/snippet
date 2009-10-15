@@ -4,33 +4,44 @@ import os
 def usage():
 	print 'USAGE: %s SNIPPET [OPTIONS...]' % sys.argv[0]
 
-PROJECT_DIR = None
+SNIPPETS_PATH = []
+user_home = os.path.join(os.path.expanduser('~'))
+
+# Project snippets.
 path = os.getcwd()
 while path != '/':
 	p = os.path.join(path, '.snippets')
 	if os.path.isdir(p):
-		PROJECT_DIR = p
+		SNIPPETS_PATH.append(p)
 		break
 	path = os.path.dirname(path)
-USER_DIR = os.path.join(os.path.expanduser('~'), '.snippets')
-SYS_DIR = os.path.join(os.path.dirname(__file__), 'snippets')
+
+# User snippets.
+SNIPPETS_PATH.append(os.path.join(user_home, '.snippets'))
+
+# System snippets.
+SNIPPETS_PATH.append(os.path.join(os.path.dirname(__file__), 'snippets'))
+
+# Default user package.
+SNIPPETS_PATH.append(os.path.join(user_home, '.snippets/default'))
 
 class SnippetDoesNotExist:
 	pass
 
 def load_snippet(name):
 	import imp
-	save_path = sys.path
-	if PROJECT_DIR:
-		sys.path = [PROJECT_DIR, USER_DIR, SYS_DIR]
+	parts = name.split('.')
+	if len(parts) > 1:
+		package_path = os.path.join(*parts[:-1])
 	else:
-		sys.path = [USER_DIR, SYS_DIR]
+		package_path = ''
+	module_name = parts[-1]
+	search_path = [os.path.join(p, package_path) for p in SNIPPETS_PATH]
 	try:
-		module = imp.find_module(name)
+		module = imp.find_module(module_name, search_path)
 	except ImportError:
 		raise SnippetDoesNotExist()
-	sys.path = save_path
-	return imp.load_module(name, *module)
+	return imp.load_module(module_name, *module)
 
 if __name__ == '__main__':
 	if len(sys.argv) < 2:
@@ -47,3 +58,5 @@ if __name__ == '__main__':
 	if not exit_code:
 		exit_code = 0
 	sys.exit(exit_code)
+
+# vim:set ft=python ts=4 sw=4 tw=79 noet: 
