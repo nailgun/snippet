@@ -7,5 +7,11 @@ public:
 	~{{ class_name }}();
 };
 
+inline {{ class_name }}::{{ class_name }}() {
+}
+
+inline {{ class_name }}::~{{ class_name }}() {
+}
+
 #endif /* {{ class_name|upper }}_H_ */
 

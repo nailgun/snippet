@@ -2,7 +2,7 @@ import sys
 import os
 
 def usage():
-	print 'USAGE: %s SNIPPET [OPTIONS...]' % sys.argv[0]
+	print 'Usage: snippet SNIPPET [ARGS...]'
 
 SNIPPETS_PATH = []
 user_home = os.path.join(os.path.expanduser('~'))
@@ -46,15 +46,15 @@ def load_snippet(name):
 if __name__ == '__main__':
 	if len(sys.argv) < 2:
 		usage()
-		sys.exit(1)
+		sys.exit(2)
 	snippet_name = sys.argv[1]
 	try:
 		snippet = load_snippet(snippet_name)
 	except SnippetDoesNotExist:
-		print 'snippet %s does not found' % snippet_name
+		print >> sys.stderr, 'snippet: %s does not found' % snippet_name
 		exit_code = -1
 	else:
-		exit_code = snippet.generate(sys.argv[1:]) 
+		exit_code = snippet.main(sys.argv[1:]) 
 	if not exit_code:
 		exit_code = 0
 	sys.exit(exit_code)
