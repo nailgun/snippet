@@ -29,7 +29,7 @@ def main(args):
 	parser = OptionParser(usage='Usage: %prog [options] CLASSNAME',
 			prog=args[0])
 	parser.add_option('-i', action='store_true', dest='inline',
-			help='make inline constructor and destructor')
+			help='make constructor and destructor inline')
 	parser.add_option('-f', action='store_true', dest='files',
 			help='generate files instead of writing to stdout')
 	(options, args) = parser.parse_args(args[1:])
